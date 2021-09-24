@@ -9,11 +9,16 @@ This second microservices exposed via the endpoint documentAnalyzer/analyzeSenti
 
 The result is the positive, negative, and neutral words found in the document you provided.
 
-Some screenshots:
+#Screenshots:
+General service view
 ![General service view](/screenshots/microservicesScreenshot.png?raw=true "General service view")
 
+
+Postman query to the processed documents (pdf->txt)
 ![Postman query to the processed documents (pdf->txt)](/screenshots/postman1.png?raw=true "Postman query to the processed documents (pdf->txt)")
 
+Postman query with the result of the sentiment analysis
 ![Postman query with the result of the sentiment analysis](/screenshots/postman2.png?raw=true "Postman query with the result of the sentiment analysis")
 
+Postman login result with the JWT token required to query the internal microservices
 ![Postman login result with the JWT token required to query the internal microservices](/screenshots/postman3.png?raw=true "Postman login result with the JWT token required to query the internal microservices")
