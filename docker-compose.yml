@@ -1,0 +1,98 @@
+version: '3.8'
+
+
+services:  
+    # Database - Mongo DB
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: alex
+      MONGO_INITDB_ROOT_PASSWORD: alex
+      MONGO_INITDB_DATABASE: admin 
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongodb/docker-entrypoint-initdb.d/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - mongodata:/data/db
+    networks:
+        - aplanet
+
+  # Database Manager
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo-express
+    restart: unless-stopped
+    ports:
+      - 27018:8081
+    depends_on:
+      - mongodb
+    environment:
+        ME_CONFIG_MONGODB_SERVER: mongodb
+        ME_CONFIG_BASICAUTH_USERNAME: alex
+        ME_CONFIG_BASICAUTH_PASSWORD: alex
+        ME_CONFIG_MONGODB_PORT: 27017
+        ME_CONFIG_MONGODB_ADMINUSERNAME: alex
+        ME_CONFIG_MONGODB_ADMINPASSWORD: alex
+    networks:
+        - aplanet
+ 
+ 
+  apigateway:
+    container_name: apigateway
+    build:
+        context: ./apigateway/
+        dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      PROD: true
+    ports:
+        - '3000:3000'
+    command: npm start
+    depends_on:
+       - mongodb
+    links:
+      - mongodb
+    networks:
+        - aplanet
+       
+  documentreader:
+    container_name: documentreader
+    build:
+        context: ./documentreader/
+        dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      PROD: true
+    ports:
+        - '3001:3001'
+    command: npm start
+    depends_on:
+        - apigateway
+    networks:
+        - aplanet
+  
+  documentanalyzer:
+    container_name: documentanalyzer
+    build:
+        context: ./documentanalyzer/
+        dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      PROD: true
+    ports:
+        - '3002:3002'
+    command: npm start
+    depends_on:
+        - documentreader
+    networks:
+        - aplanet
+
+
+networks:
+  aplanet:
+    driver: bridge
+
+volumes:
+    mongodata:

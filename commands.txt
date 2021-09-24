@@ -1,0 +1,12 @@
+#Clear old volumes
+docker volume prune
+
+#Requieres a MongoDB volume in docker
+docker volume create --label=mongodata mongodata
+
+#Start only mongodb
+docker-compose up --build -d mongo
+#Both mongo and express
+docker-compose up --build -d mongo-express
+
+#docker-compose down aplanet && docker volume prune && docker-compose up --build -d documentanalyzer
